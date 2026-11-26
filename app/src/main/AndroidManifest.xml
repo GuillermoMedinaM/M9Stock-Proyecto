@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoM9">
 
-        <!-- Pantalla de Login (Inicio de la app) -->
+        <!-- Pantalla de Login -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Pantalla Principal / Catálogo -->
+        <!-- Pantalla Principal / Catalogo -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -30,8 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
 
+//-----------------------------------------------------------------------------------------------------------
+public class MainActivity extends AppCompatActivity {
     private static final String UBI_TIENDA = "Tienda";
     private static final String UBI_ALMACEN = "Almacén";
     private static final String UBI_MODISTA = "Modista y otros";
@@ -44,17 +45,23 @@ public class MainActivity extends AppCompatActivity {
     private Button btnGuardarLocal, btnSincronizarAhora;
     private BottomNavigationView bottomNavM9;
 
+    // Guarda en que pestana estamos ahora mismo
     private String pestanaActual = UBI_TIENDA;
     private LocalDbHelper dbHelper;
     private DatabaseReference prendasRef;
     private ConnectivityManager connectivityManager;
     private ConnectivityManager.NetworkCallback networkCallback;
 
+//ONCREATE PRINCIPAL V 0.5 BETA
+//-----------------------------------------------------------------------------------------------------------
+    // Prepara la pantalla, los botones y la conexion con la base de datos
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        // Evita que la barra superior o inferior tape el contenido
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -62,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dbHelper = new LocalDbHelper(this);
+
+        // Conecta directamente con la base de datos
         prendasRef = FirebaseDatabase.getInstance(DB_URL).getReference("prendas");
 
         vistaStock = findViewById(R.id.vistaStock);
@@ -78,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         btnSincronizarAhora = findViewById(R.id.btnSincronizarAhora);
         bottomNavM9 = findViewById(R.id.bottomNavM9);
 
+        // Rellena el desplegable
         String[] opcionesUbicacion = {UBI_TIENDA, UBI_ALMACEN, UBI_MODISTA};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 this,
@@ -91,10 +101,12 @@ public class MainActivity extends AppCompatActivity {
         mostrarSeccionStock(UBI_TIENDA, "Stock en Tienda", "Vestidos de fiesta y comunión en sala de venta");
         actualizarEstadisticas();
 
+        // Sube lo que quedo pendiente sin mensajes al arrancar
         if (hayInternet()) {
             sincronizarPendientesConFirebase(false);
         }
 
+        // Boton para pasar de pagina entre si; cambia entre las secciones de stock y control
         bottomNavM9.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_tienda) {
@@ -107,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 mostrarSeccionStock(UBI_MODISTA, "Modista y Otros", "Prendas en arreglo, entallado o ubicaciones especiales");
                 return true;
             } else if (id == R.id.nav_control) {
+                // Esconde el listado y muestra el panel de alta y resumen
                 vistaStock.setVisibility(View.GONE);
                 vistaControl.setVisibility(View.VISIBLE);
                 actualizarEstadisticas();
@@ -115,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
+
+        // Guarda el articulo en el movil y la sube si hay internet
         btnGuardarLocal.setOnClickListener(v -> {
             String ref = etReferencia.getText().toString().trim();
             String cat = etCategoria.getText().toString().trim();
@@ -124,15 +139,20 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Indica la referencia del vestido", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            //Si no se escribe tipo, se pone Fiesta por defecto
             if (cat.isEmpty()) {
                 cat = "Fiesta";
             }
 
+            // Guarda primero en la base de datos del movil por si no hay internet
             dbHelper.insertarPrendaLocal(ref, cat, ubi);
             etReferencia.setText("");
             etCategoria.setText("");
 
             actualizarEstadisticas();
+
+            // Solo actualiza la lista visible si coincide con la pestana abierta
             if (pestanaActual.equals(ubi)) {
                 refrescarListadoSeccion();
             }
@@ -144,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Fuerza la subida manual de las prendas que esten pendientes DEBUG
         btnSincronizarAhora.setOnClickListener(v -> {
             if (hayInternet()) {
                 sincronizarPendientesConFirebase(true);
@@ -153,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // Cambia el titulo, el texto y las prendas que se ven en pantalla V0.2 BETA
     private void mostrarSeccionStock(String ubicacion, String titulo, String subtitulo) {
         pestanaActual = ubicacion;
         vistaControl.setVisibility(View.GONE);
@@ -162,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
         refrescarListadoSeccion();
     }
 
+
+//-----------------------------------------------------------------------------------------------------------
+    //Muestra en pantalla las prendas de esta  pestana V 0.3 BETA
     private void refrescarListadoSeccion() {
         List<LocalDbHelper.PrendaLocal> todas = dbHelper.obtenerTodas();
         StringBuilder sb = new StringBuilder();
@@ -170,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
         for (LocalDbHelper.PrendaLocal p : todas) {
             if (p.ubicacion.equalsIgnoreCase(pestanaActual)) {
                 contador++;
+
+                // Indica si ya esta en Firebase o sigue esperando subida DEBUG
                 String syncTag = (p.pendienteSync == 1) ? "· Pendiente sync" : "· Sincronizado";
                 sb.append("• ").append(p.referencia)
                         .append("  [").append(p.categoria).append("] ")
@@ -183,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
         tvListadoSeccion.setText(sb.toString());
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    //Cuenta cuantas prendas hay en cada sitio y cuantas faltan por subir V 0.1 BETA
     private void actualizarEstadisticas() {
         List<LocalDbHelper.PrendaLocal> todas = dbHelper.obtenerTodas();
         int total = todas.size();
@@ -207,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
         tvEstadisticasGlobales.setText(stats);
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // Envia a Firebase las cosas guardadas en el movil que aun no se subieron V 0.3 TEST
     private void sincronizarPendientesConFirebase(boolean mostrarAviso) {
         List<LocalDbHelper.PrendaLocal> pendientes = dbHelper.obtenerPendientesSync();
         if (pendientes.isEmpty()) {
@@ -223,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (LocalDbHelper.PrendaLocal prenda : pendientes) {
+            // Crea un hueco nuevo con un id para Firebase
             String key = prendasRef.push().getKey();
             if (key == null) continue;
 
@@ -232,18 +265,20 @@ public class MainActivity extends AppCompatActivity {
             datos.put("ubicacion", prenda.ubicacion);
             datos.put("localId", prenda.id);
 
+            //Si en fibrase llego bien el articulo lo confirma como sincronizado
             prendasRef.child(key).setValue(datos)
                     .addOnSuccessListener(unused -> {
                         dbHelper.marcarComoSincronizado(prenda.id);
                         refrescarListadoSeccion();
                         actualizarEstadisticas();
                     })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Error Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show()
                     );
         }
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // Comprueba si el movil tiene conexion a internet
     private boolean hayInternet() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
@@ -253,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
         return caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // Cambia el texto y el color del estado de conexion arriba en la pantalla V 0.4 ALPHA
     private void actualizarEstadoRed() {
         if (hayInternet()) {
             tvEstadoRed.setText("Conectado · Sincronización activa con Firebase");
@@ -263,6 +300,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // Queda pendiente de si vuelve o se va el internet para actualizar y sincronizar solo V 0.2 BETA
     private void registrarEscuchaRed() {
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) return;
@@ -274,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
         networkCallback = new ConnectivityManager.NetworkCallback() {
             @Override
             public void onAvailable(@NonNull Network network) {
+                // Vuelve al hilo de la pantalla para poder cambiar textos y avisos sin fallo
                 runOnUiThread(() -> {
                     actualizarEstadoRed();
                     sincronizarPendientesConFirebase(false);
@@ -288,6 +328,8 @@ public class MainActivity extends AppCompatActivity {
         connectivityManager.registerNetworkCallback(request, networkCallback);
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // Quita el aviso de red al cerrar la pantalla V 0.1 BETA
     @Override
     protected void onDestroy() {
         super.onDestroy();

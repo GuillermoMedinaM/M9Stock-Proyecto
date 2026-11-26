@@ -14,20 +14,21 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private FirebaseAuth mAuth;
 
+//-----------------------------------------------------------------------------------------------------------
+    // Prepara la pantalla de inicio de sesion y comprueba el correo y contrasena al pulsar entrar V 0.4 BETA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar Firebase Auth
+        // Conecta con el sistema de usuarios de Firebase
         mAuth = FirebaseAuth.getInstance();
 
-        // Referencias de la interfaz
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
 
-        // Accion del boton de login
+        // Comprueba los datos y entra a la pantalla principal si son correctos
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -37,17 +38,17 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // Autenticacion con firebase
+            // Pide a Firebase que valide el correo y la contrasena
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "¡Bienvenido a M9Stock!", Toast.LENGTH_SHORT).show();
 
+                            // Abre la pantalla principal y cierra el login para no volver atras con el boton volver
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
-                        }
-                         else {
+                        } else {
                             Toast.makeText(LoginActivity.this, "Error de acceso: Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                         }
                     });
