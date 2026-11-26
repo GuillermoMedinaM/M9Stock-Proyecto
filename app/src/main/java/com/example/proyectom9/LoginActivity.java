@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
 
-        // Acción del botón de login
+        // Accion del boton de login
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // Autenticación con Firebase
+            // Autenticacion con firebase
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {

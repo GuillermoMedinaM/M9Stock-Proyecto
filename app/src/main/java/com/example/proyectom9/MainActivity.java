@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             if (hayInternet()) {
                 sincronizarPendientesConFirebase(true);
             } else {
-                Toast.makeText(this, "No hay conexión a Internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No hay conexion a Internet", Toast.LENGTH_SHORT).show();
             }
         });
     }

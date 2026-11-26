@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:background="#181A1F">
 
-    <!-- Cabecera elegante M9 Granada -->
+    <!-- Cabecera elegante M9 Granada con logo centrado -->
     <LinearLayout
         android:id="@+id/headerM9"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#20232A"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         android:paddingTop="16dp"
@@ -20,9 +21,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/ivLogoM9"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="Logo M9 Stock"
+            android:scaleType="fitCenter"
+            android:src="@drawable/m9_stock_logo" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:letterSpacing="0.14"
             android:text="M9 GRANADA"
             android:textColor="#C8A96E"
@@ -33,6 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:gravity="center"
             android:text="Vestidos de Fiesta y Comunión · C/ Ribera del Beiro, 26"
             android:textColor="#A7B0C0"
             android:textSize="12sp" />
@@ -42,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
             android:text="Conectado · Sincronización activa"
             android:textColor="#8FD19E"
             android:textSize="12sp" />

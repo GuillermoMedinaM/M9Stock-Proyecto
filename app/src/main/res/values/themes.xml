@@ -5,5 +5,10 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+    <style name="ShapeAppearance.M9.LogoEsquinasRedondas" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
     <style name="Theme.ProyectoM9" parent="Base.Theme.ProyectoM9" />
 </resources>
