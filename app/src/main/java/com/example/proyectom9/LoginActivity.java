@@ -43,12 +43,11 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "¡Bienvenido a M9Stock!", Toast.LENGTH_SHORT).show();
 
-                            // Aquí saltaremos al Catálogo principal más adelante
-                            // Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            // startActivity(intent);
-                            // finish();
-
-                        } else {
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                         else {
                             Toast.makeText(LoginActivity.this, "Error de acceso: Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                         }
                     });

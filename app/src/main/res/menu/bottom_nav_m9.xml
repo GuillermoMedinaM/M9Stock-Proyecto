@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_tienda"
+        android:icon="@drawable/ic_m9_tienda"
+        android:title="Tienda" />
+    <item
+        android:id="@+id/nav_almacen"
+        android:icon="@drawable/ic_m9_almacen"
+        android:title="Almacén" />
+    <item
+        android:id="@+id/nav_modista"
+        android:icon="@drawable/ic_m9_modista"
+        android:title="Modista" />
+    <item
+        android:id="@+id/nav_control"
+        android:icon="@drawable/ic_m9_control"
+        android:title="Control" />
+</menu>
